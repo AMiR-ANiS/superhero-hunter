@@ -40,8 +40,19 @@
     } else {
       let index = marvel.favourites.indexOf(id);
       marvel.favourites.splice(index, 1);
-      btn.className = 'favourite-btn';
-      btn.innerHTML = 'Add to favourites';
+      if (marvel.showFavourites) {
+        document.getElementById(id).remove();
+        if (marvel.favourites.length == 0) {
+          const list = document.getElementById('characters-list');
+          const empty = document.createElement('h1');
+          empty.id = 'empty-list';
+          empty.innerHTML = 'Nothing here to display!';
+          list.appendChild(empty);
+        }
+      } else {
+        btn.className = 'favourite-btn';
+        btn.innerHTML = 'Add to favourites';
+      }
     }
 
     localStorage.setItem('marvel', JSON.stringify(marvel));
@@ -73,25 +84,37 @@
     const characterTab = document.getElementById('character-tab');
     const favouriteTab = document.getElementById('favourite-tab');
 
-    list.innerHTML = '';
     characterTab.removeEventListener('click', toggleTab);
     favouriteTab.removeEventListener('click', toggleTab);
+
+    list.innerHTML = '';
 
     characterTab.addEventListener('click', toggleTab);
     favouriteTab.addEventListener('click', toggleTab);
 
     let characters;
     if (marvel.showFavourites) {
-      characters = marvel.favourites;
+      characters = marvel.data.data.results.filter((value) => {
+        let id = value.id.toString();
+        return marvel.favourites.indexOf(id) != -1;
+      });
     } else {
       characters = marvel.data.data.results;
+    }
+
+    if (characters.length == 0) {
+      const empty = document.createElement('h1');
+      empty.id = 'empty-list';
+      empty.innerHTML = 'Nothing here to display!';
+      list.appendChild(empty);
     }
 
     characters.forEach((element) => {
       const card = document.createElement('div');
       card.className = 'character-item';
+      card.id = element.id;
 
-      let index = marvel.favourites.indexOf(element.id);
+      let index = marvel.favourites.indexOf(element.id.toString());
       let btnClass;
       let btn;
       if (index == -1) {

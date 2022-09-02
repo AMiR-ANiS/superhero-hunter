@@ -120,6 +120,7 @@ body {
 #characters-list {
   display: flex;
   flex-wrap: wrap;
+  justify-content: space-around;
 }
 
 .character-item {
@@ -133,6 +134,11 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+}
+
+.image-container {
+  width: 300px;
+  height: 450px;
 }
 
 .image-container > img:hover {
