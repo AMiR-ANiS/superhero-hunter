@@ -3,7 +3,8 @@
     data: null,
     favourites: [],
     showFavourites: false,
-    expiry: null
+    expiry: null,
+    id: null
   };
 
   const newListDom = function (character, btnClass, btn) {
@@ -94,11 +95,13 @@
 
     let characters;
     if (marvel.showFavourites) {
+      favouriteTab.classList.add('active-tab');
       characters = marvel.data.data.results.filter((value) => {
         let id = value.id.toString();
         return marvel.favourites.indexOf(id) != -1;
       });
     } else {
+      characterTab.classList.add('active-tab');
       characters = marvel.data.data.results;
     }
 
@@ -162,4 +165,104 @@
   } else {
     fetchCharacters();
   }
+
+  const enableAutocomplete = function () {
+    const searchBar = document.getElementById('search-bar');
+    let selected = -1;
+
+    const destroyLists = function (element) {
+      document.querySelectorAll('.autocomplete-list').forEach(function (list) {
+        if (element != searchBar) {
+          list.remove();
+        }
+      });
+    };
+
+    const handleTextInput = function (event) {
+      let inputBox = event.target;
+      let inputValue = inputBox.value;
+      destroyLists();
+      if (!inputValue) {
+        return;
+      }
+
+      let newList = document.createElement('div');
+      newList.classList.add('autocomplete-list');
+      let parent = document.querySelector('.autocomplete');
+      parent.appendChild(newList);
+      marvel.data.data.results.forEach(function (value) {
+        if (
+          inputValue.toUpperCase() ==
+          value.name.slice(0, inputValue.length).toUpperCase()
+        ) {
+          let item = document.createElement('div');
+          item.innerHTML = `<strong>${value.name.slice(
+            0,
+            inputValue.length
+          )}</strong>${value.name.slice(inputValue.length)}`;
+
+          item.addEventListener('click', function (event) {
+            marvel.id = value.id;
+            localStorage.setItem('marvel', JSON.stringify(marvel));
+            location.href = './singleCharacter.html';
+          });
+          newList.appendChild(item);
+        }
+      });
+    };
+
+    const removeActive = function (divs) {
+      divs.forEach(function (div) {
+        div.classList.remove('autocomplete-active');
+      });
+    };
+
+    const addActive = function (divs) {
+      removeActive(divs);
+      if (selected >= divs.length) {
+        selected = 0;
+      }
+      if (selected < 0) {
+        selected = divs.length - 1;
+      }
+      divs[selected].classList.add('autocomplete-active');
+      divs[selected].scrollIntoView();
+    };
+
+    const handleKeyDown = function (event) {
+      const list = document.querySelector('.autocomplete-list');
+      if (!list) {
+        return;
+      }
+      const items = list.querySelectorAll('div');
+      if (items.length == 0) {
+        return;
+      }
+
+      switch (event.keyCode) {
+        case 40:
+          selected++;
+          addActive(items);
+          break;
+        case 38:
+          selected--;
+          addActive(items);
+          break;
+        case 13:
+          event.preventDefault();
+          if (selected > -1) {
+            items[selected].click();
+          }
+      }
+    };
+
+    const handleDocumentClick = function (event) {
+      destroyLists(event.target);
+    };
+    searchBar.addEventListener('input', handleTextInput);
+    searchBar.addEventListener('keydown', handleKeyDown);
+    document.addEventListener('click', handleDocumentClick);
+  };
+
+  enableAutocomplete();
 }
