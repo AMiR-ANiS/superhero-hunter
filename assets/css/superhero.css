@@ -196,18 +196,28 @@ body {
 .image-container {
   width: 300px;
   height: 450px;
+  cursor: pointer;
 }
 
 .image-container > img:hover {
-  animation: shrinkAndEnlarge 500ms ease-in-out 2 alternate;
+  animation: shake 500ms ease-in-out 1;
 }
 
-@keyframes shrinkAndEnlarge {
+@keyframes shake {
   0% {
-    transform: scale(1);
+    transform: scale(1) rotate(0deg);
+  }
+  33% {
+    transform: scale(0.9) rotate(5deg);
+  }
+  50% {
+    transform: scale(1) rotate(0deg);
+  }
+  66% {
+    transform: scale(0.9) rotate(-5deg);
   }
   100% {
-    transform: scale(0.9);
+    transform: scale(1) rotate(0deg);
   }
 }
 
@@ -298,9 +308,39 @@ body {
   color: red;
 }
 
+#superhero-page-app {
+  height: 100vh;
+  box-sizing: border-box;
+  padding-top: 60px;
+  padding-bottom: 30px;
+  position: relative;
+}
+
+#superhero-page-app a {
+  color: white;
+  text-decoration: none;
+}
+
+#superhero-page-app a:link {
+  color: white;
+}
+
+#superhero-page-app a:visited {
+  color: rgb(204, 0, 255);
+}
+
+#superhero-page-app a:hover {
+  color: rgb(0, 255, 85);
+}
+
+#superhero-page-app a:active {
+  color: rgb(255, 0, 0);
+}
+
 #single-character-container {
   height: 100%;
-  background-color: rgb(190, 253, 255);
+  background-image: url('../images/vitalis-hirschmann-4ErRQkRiOv4-unsplash.jpg');
+  background-size: cover;
   overflow-x: auto;
   overflow-y: auto;
   scrollbar-width: none;
@@ -323,4 +363,61 @@ body {
 
 #back-btn:active {
   box-shadow: -3px -3px 8px black;
+}
+
+#info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#superhero-img {
+  box-shadow: 6px 6px 16px black;
+  border: 2px solid white;
+  width: 500px;
+}
+
+#superhero-img > img {
+  width: 100%;
+}
+
+#superhero-img:hover {
+  animation: moveLeftRight 500ms ease-in-out 1;
+}
+
+@keyframes moveLeftRight {
+  0% {
+    transform: translate(0px);
+  }
+  33% {
+    transform: translate(-10px);
+  }
+  66% {
+    transform: translate(10px);
+  }
+  100% {
+    transform: translate(0px);
+  }
+}
+
+#superhero-name {
+  font-weight: bold;
+  font-size: 2rem;
+  font-family: cursive;
+  font-style: italic;
+}
+
+#superhero-description {
+  font-family: monospace;
+  align-self: flex-start;
+  margin: 0px 20px;
+}
+
+#superhero-stats {
+  align-self: flex-start;
+  padding: 20px;
+}
+
+#superhero-stats h3 {
+  margin: 0;
 }

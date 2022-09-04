@@ -20,17 +20,15 @@
             <div class="character-name">${character.name}</div>
             <div class="character-desc">${character.description}</div>
             <div class="character-stats">
-              <div>Comics: ${character.comics.available}, 
-                Stories: ${character.stories.available},
-                Events: ${character.events.available}, 
-                Series: ${character.series.available}
+              <div>Comics: ${character.comics}, 
+                Stories: ${character.stories},
+                Events: ${character.events}, 
+                Series: ${character.series}
               </div>
               <div class="${btnClass}" data-id="${character.id}">${btn}</div>
             </div>
             <div class="attribution">
-              <a href="http://marvel.com" target="_blank"
-                >Data provided by Marvel. © 2022 MARVEL</a
-              >
+              <a href="http://marvel.com" target="_blank">${marvel.attributionText}</a>
             </div>`;
   };
 
@@ -101,8 +99,8 @@
     let characters;
     if (marvel.showFavourites) {
       favouriteTab.classList.add('active-tab');
-      characters = marvel.home.filter((value) => {
-        let id = value.id.toString();
+      characters = marvel.characters.filter((obj) => {
+        let id = obj.id.toString();
         return marvel.favourites.indexOf(id) != -1;
       });
     } else {
@@ -135,9 +133,23 @@
 
       card.innerHTML = newListDom(element, btnClass, btn);
       list.appendChild(card);
+
+      if (element.description == '') {
+        card.querySelector('.character-desc').innerHTML =
+          'Description not available!';
+      }
+
       card
         .querySelector(`.${btnClass}`)
         .addEventListener('click', toggleFavourite);
+
+      card
+        .querySelector('.image-container')
+        .addEventListener('click', function (event) {
+          marvel.id = element.id;
+          localStorage.setItem('marvel', JSON.stringify(marvel));
+          location.assign('./singleCharacter.html');
+        });
     });
   };
 
@@ -165,16 +177,21 @@
     marvel.copyright = data.copyright;
     marvel.attributionHTML = data.attributionHTML;
     marvel.attributionText = data.attributionText;
-    marvel.home = data.data.results;
-    marvel.home.forEach(function (value) {
-      let obj = {
-        name: value.name,
-        id: value.id
+    data.data.results.forEach(function (obj) {
+      let objToPush = {
+        name: obj.name,
+        description: obj.description,
+        id: obj.id,
+        events: obj.events.available,
+        stories: obj.stories.available,
+        series: obj.series.available,
+        comics: obj.comics.available,
+        thumbnail: JSON.parse(JSON.stringify(obj.thumbnail))
       };
-      marvel.characters.push(obj);
+      marvel.home.push(objToPush);
+      marvel.characters.push(objToPush);
     });
 
-    marvel = JSON.parse(JSON.stringify(marvel));
     renderCharacters();
 
     offset += 100;
@@ -188,19 +205,24 @@
       });
       data = await response.json();
 
-      data.data.results.forEach(function (value) {
-        let obj = {
-          name: value.name,
-          id: value.id
+      data.data.results.forEach(function (obj) {
+        let objToPush = {
+          name: obj.name,
+          description: obj.description,
+          id: obj.id,
+          events: obj.events.available,
+          stories: obj.stories.available,
+          series: obj.series.available,
+          comics: obj.comics.available,
+          thumbnail: JSON.parse(JSON.stringify(obj.thumbnail))
         };
-        marvel.characters.push(obj);
+        marvel.characters.push(objToPush);
       });
 
       offset += 100;
     }
 
     localStorage.setItem('marvel', JSON.stringify(marvel));
-    marvel = JSON.parse(localStorage.getItem('marvel'));
   };
 
   if (localStorage.getItem('marvel')) {
