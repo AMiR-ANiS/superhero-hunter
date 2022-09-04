@@ -1,6 +1,10 @@
 {
   let marvel = {
-    data: null,
+    copyright: '',
+    attributionHTML: '',
+    attributionText: '',
+    home: [],
+    characters: [],
     favourites: [],
     showFavourites: false,
     expiry: null,
@@ -80,29 +84,30 @@
     renderCharacters();
   };
 
+  const characterTab = document.getElementById('character-tab');
+  const favouriteTab = document.getElementById('favourite-tab');
+
+  characterTab.addEventListener('click', toggleTab);
+  favouriteTab.addEventListener('click', toggleTab);
+
   const renderCharacters = function () {
     const list = document.getElementById('characters-list');
-    const characterTab = document.getElementById('character-tab');
-    const favouriteTab = document.getElementById('favourite-tab');
 
-    characterTab.removeEventListener('click', toggleTab);
-    favouriteTab.removeEventListener('click', toggleTab);
+    const footer = document.getElementById('footer');
+    footer.innerHTML = `${marvel.copyright}`;
 
     list.innerHTML = '';
-
-    characterTab.addEventListener('click', toggleTab);
-    favouriteTab.addEventListener('click', toggleTab);
 
     let characters;
     if (marvel.showFavourites) {
       favouriteTab.classList.add('active-tab');
-      characters = marvel.data.data.results.filter((value) => {
+      characters = marvel.home.filter((value) => {
         let id = value.id.toString();
         return marvel.favourites.indexOf(id) != -1;
       });
     } else {
       characterTab.classList.add('active-tab');
-      characters = marvel.data.data.results;
+      characters = marvel.home;
     }
 
     if (characters.length == 0) {
@@ -137,21 +142,65 @@
   };
 
   const fetchCharacters = async function () {
-    const url =
-      'https://gateway.marvel.com/v1/public/characters?ts=2&apikey=917ee510cf42654a13644448b8470ad3&hash=967615c8277734f7fc55f9ba050024f3&limit=50&offset=1200';
-    const response = await fetch(url, {
+    const API_ROOT = 'https://gateway.marvel.com';
+    const ts = 2;
+    const publicKey = '917ee510cf42654a13644448b8470ad3';
+    const hash = '967615c8277734f7fc55f9ba050024f3';
+    let limit = 100;
+    let offset = 0;
+    let orderBy = 'name';
+    let url = `${API_ROOT}/v1/public/characters?ts=${ts}&apikey=${publicKey}&hash=${hash}&limit=${limit}&offset=${offset}&orderBy=${orderBy}`;
+
+    let response = await fetch(url, {
       method: 'GET',
       headers: {
         Accept: '*/*'
       }
     });
-    const data = await response.json();
+    let data = await response.json();
 
-    marvel.data = { ...data };
+    let total = data.data.total;
     let ms = Date.now();
     marvel.expiry = ms + 1000 * 60 * 60 * 24;
-    localStorage.setItem('marvel', JSON.stringify(marvel));
+    marvel.copyright = data.copyright;
+    marvel.attributionHTML = data.attributionHTML;
+    marvel.attributionText = data.attributionText;
+    marvel.home = data.data.results;
+    marvel.home.forEach(function (value) {
+      let obj = {
+        name: value.name,
+        id: value.id
+      };
+      marvel.characters.push(obj);
+    });
+
+    marvel = JSON.parse(JSON.stringify(marvel));
     renderCharacters();
+
+    offset += 100;
+    while (offset < total) {
+      const url = `${API_ROOT}/v1/public/characters?ts=${ts}&apikey=${publicKey}&hash=${hash}&limit=${limit}&offset=${offset}&orderBy=${orderBy}`;
+      response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          Accept: '*/*'
+        }
+      });
+      data = await response.json();
+
+      data.data.results.forEach(function (value) {
+        let obj = {
+          name: value.name,
+          id: value.id
+        };
+        marvel.characters.push(obj);
+      });
+
+      offset += 100;
+    }
+
+    localStorage.setItem('marvel', JSON.stringify(marvel));
+    marvel = JSON.parse(localStorage.getItem('marvel'));
   };
 
   if (localStorage.getItem('marvel')) {
@@ -173,6 +222,7 @@
     const destroyLists = function (element) {
       document.querySelectorAll('.autocomplete-list').forEach(function (list) {
         if (element != searchBar) {
+          selected = -1;
           list.remove();
         }
       });
@@ -190,7 +240,7 @@
       newList.classList.add('autocomplete-list');
       let parent = document.querySelector('.autocomplete');
       parent.appendChild(newList);
-      marvel.data.data.results.forEach(function (value) {
+      marvel.characters.forEach(function (value) {
         if (
           inputValue.toUpperCase() ==
           value.name.slice(0, inputValue.length).toUpperCase()
@@ -204,7 +254,7 @@
           item.addEventListener('click', function (event) {
             marvel.id = value.id;
             localStorage.setItem('marvel', JSON.stringify(marvel));
-            location.href = './singleCharacter.html';
+            location.assign('./singleCharacter.html');
           });
           newList.appendChild(item);
         }
