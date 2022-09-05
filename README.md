@@ -1,11 +1,13 @@
 # Superhero hunter
 
-A superhero hunter app built using HTML, CSS and JS that uses Marvel API
+Super hero hunter app built using HTML, CSS and JS.
+Uses Marvel API to display data.
 
 ## Features
 
 A user can:
 
 - Display a list of superheroes on the homepage.
-- Favourite / Unfavourite any superhero of his/her choice.
-- Display all the details about any superhero
+- Favourite / unfavourite a superhero.
+- Display details about a superhero in depth.
+- Search a superhero

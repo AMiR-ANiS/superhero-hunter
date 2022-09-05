@@ -1,4 +1,6 @@
 {
+  // marvel variable for storing essential information after hitting API
+
   let marvel = {
     copyright: '',
     attributionHTML: '',
@@ -11,11 +13,15 @@
     id: null
   };
 
+  // Navigate to home page upon clicking of app name
+
   document
     .getElementById('app-name')
     .addEventListener('click', function (event) {
       location.assign('./index.html');
     });
+
+  // Function to create new DOM element for each character
 
   const newListDom = function (character, btnClass, btn) {
     return `<div class="image-container">
@@ -38,9 +44,12 @@
             </div>`;
   };
 
+  // Function to favourite/unfavourite a character (toggle favourite)
+
   const toggleFavourite = function (event) {
     let btn = event.target;
     let id = btn.getAttribute('data-id');
+
     if (btn.classList.contains('favourite-btn')) {
       marvel.favourites.push(id);
       btn.classList.replace('favourite-btn', 'unfavourite-btn');
@@ -50,6 +59,9 @@
       marvel.favourites.splice(index, 1);
       if (marvel.showFavourites) {
         document.getElementById(id).remove();
+
+        // If there are no favourites, display a message
+
         if (marvel.favourites.length == 0) {
           const list = document.getElementById('characters-list');
           const empty = document.createElement('h1');
@@ -63,8 +75,12 @@
       }
     }
 
+    // update localStorage
+
     localStorage.setItem('marvel', JSON.stringify(marvel));
   };
+
+  // Function for switching tabs between display all characters and display favourites
 
   const toggleTab = function (event) {
     let tab = event.target;
@@ -83,15 +99,23 @@
       }
     }
 
+    // update localStorage and re-render superheroes
+
     localStorage.setItem('marvel', JSON.stringify(marvel));
     renderCharacters();
   };
 
+  // Get switch tabs from the HTML DOM
+
   const characterTab = document.getElementById('character-tab');
   const favouriteTab = document.getElementById('favourite-tab');
 
+  // Attach event listeners to switch tabs
+
   characterTab.addEventListener('click', toggleTab);
   favouriteTab.addEventListener('click', toggleTab);
+
+  // Function for rendering superheroes
 
   const renderCharacters = function () {
     const list = document.getElementById('characters-list');
@@ -100,6 +124,8 @@
     footer.innerHTML = `${marvel.copyright}`;
 
     list.innerHTML = '';
+
+    // Select superheroes to display based on tab status
 
     let characters;
     if (marvel.showFavourites) {
@@ -113,6 +139,8 @@
       characters = marvel.home;
     }
 
+    // If there are no characters to display, show a message
+
     if (characters.length == 0) {
       const empty = document.createElement('h1');
       empty.id = 'empty-list';
@@ -120,10 +148,14 @@
       list.appendChild(empty);
     }
 
+    // For each superhero, create a superhero card with its information and append to superheroes list
+
     characters.forEach((element) => {
       const card = document.createElement('div');
       card.className = 'character-item';
       card.id = element.id;
+
+      // Decide which button to display based on whether a character is in favourites list or not
 
       let index = marvel.favourites.indexOf(element.id.toString());
       let btnClass;
@@ -139,10 +171,14 @@
       card.innerHTML = newListDom(element, btnClass, btn);
       list.appendChild(card);
 
+      // If a character has no description, display a message
+
       if (element.description == '') {
         card.querySelector('.character-desc').innerHTML =
           'Description not available!';
       }
+
+      // Attach event listeners to superhero card
 
       card
         .querySelector(`.${btnClass}`)
@@ -157,6 +193,8 @@
         });
     });
   };
+
+  // Function to hit the Marvel API to fetch superheroes information
 
   const fetchCharacters = async function () {
     const API_ROOT = 'https://gateway.marvel.com';
@@ -177,8 +215,15 @@
     let data = await response.json();
 
     let total = data.data.total;
+
+    // Setting an expiry date for the localStorage variable, upon expiry the data is again fetched from the API
+    // Setting expiry date 1 day after the API is called.
+
     let ms = Date.now();
     marvel.expiry = ms + 1000 * 60 * 60 * 24;
+
+    // Store information from the API
+
     marvel.copyright = data.copyright;
     marvel.attributionHTML = data.attributionHTML;
     marvel.attributionText = data.attributionText;
@@ -197,7 +242,12 @@
       marvel.characters.push(objToPush);
     });
 
+    // Render superheroes after the first API call to prevent delay
+    // If all characters are fetched from API, then loading time increases
+
     renderCharacters();
+
+    // Fetching the rest of the superheroes from the API for autocomplete search to work.
 
     offset += 100;
     while (offset < total) {
@@ -227,11 +277,17 @@
       offset += 100;
     }
 
+    // Store the information fetched from the API in localStorage
+
     localStorage.setItem('marvel', JSON.stringify(marvel));
   };
 
+  // Update the marvel variable upon page load / reload
+
   if (localStorage.getItem('marvel')) {
     marvel = JSON.parse(localStorage.getItem('marvel'));
+
+    // If localStorage variable has expired (crossed the expiry date), re-fetch the information
     let ms = Date.now();
     if (ms >= marvel.expiry) {
       fetchCharacters();
@@ -242,9 +298,16 @@
     fetchCharacters();
   }
 
+  // Autocomplete search function
+
   const enableAutocomplete = function () {
     const searchBar = document.getElementById('search-bar');
+
+    // Variable to track the position of search item when user presses up or down arrow to navigate search results
+
     let selected = -1;
+
+    // Function to remove search results list
 
     const destroyLists = function () {
       selected = -1;
@@ -252,6 +315,8 @@
         list.remove();
       });
     };
+
+    // Function to handle search input
 
     const handleTextInput = function (event) {
       let inputBox = event.target;
@@ -269,12 +334,16 @@
       parent.appendChild(newList);
 
       marvel.characters.forEach(function (obj) {
+        // Check if the search bar input matches the first few characters of a superhero
+
         if (
           inputValue.toUpperCase() ==
           obj.name.slice(0, inputValue.length).toUpperCase()
         ) {
           let div = document.createElement('div');
           div.classList.add('autocomplete-item');
+
+          // Decide the type of button based on whether the superhero is favourite or not
 
           let btn;
           let btnClass;
@@ -296,6 +365,8 @@
                               ${btn}
                             </div>`;
           newList.appendChild(div);
+
+          // Attach event listeners to a search result
 
           div
             .querySelector('.autocomplete-item-name')
@@ -333,11 +404,15 @@
       });
     };
 
+    // Function to remove active class from a search result
+
     const removeActive = function (divs) {
       divs.forEach(function (div) {
         div.classList.remove('autocomplete-active');
       });
     };
+
+    // Function to make a search result active, highlight the search result
 
     const addActive = function (divs) {
       removeActive(divs);
@@ -351,7 +426,9 @@
       divs[selected].scrollIntoView();
     };
 
-    const handleKeyPress = function (event) {
+    // function to handle key down by the user on the search results
+
+    const handleKeydown = function (event) {
       const list = document.querySelector('.autocomplete-list');
       if (!list) {
         return;
@@ -378,8 +455,11 @@
       }
     };
 
+    // Attach event listeners to search bar and document
+    // Hide the search result when user clicks anywhere in the document except the search bar
+
     searchBar.addEventListener('input', handleTextInput);
-    searchBar.addEventListener('keypress', handleKeyPress);
+    searchBar.addEventListener('keydown', handleKeydown);
     document.addEventListener('click', function (event) {
       let clicked = event.target;
       if (clicked == searchBar) {

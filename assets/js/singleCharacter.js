@@ -1,6 +1,10 @@
 {
+  // Get the marvel variable from the localStorage
+
   const marvel = JSON.parse(localStorage.getItem('marvel'));
   let characterData = null;
+
+  // Clicking on back button or app name goes to home page
 
   document
     .getElementById('back-btn')
@@ -16,9 +20,13 @@
 
   document.getElementById('footer').innerHTML = `${marvel.attributionHTML}`;
 
+  // Autocomplete search function
+
   const enableAutocomplete = function () {
     const searchBar = document.getElementById('search-bar');
     let selected = -1;
+
+    // Remove search results function
 
     const destroyLists = function () {
       selected = -1;
@@ -26,6 +34,8 @@
         list.remove();
       });
     };
+
+    // Function to process search term input
 
     const handleTextInput = function (event) {
       let inputBox = event.target;
@@ -122,7 +132,7 @@
       divs[selected].scrollIntoView();
     };
 
-    const handleKeyPress = function (event) {
+    const handleKeydown = function (event) {
       const list = document.querySelector('.autocomplete-list');
       if (!list) {
         return;
@@ -150,7 +160,7 @@
     };
 
     searchBar.addEventListener('input', handleTextInput);
-    searchBar.addEventListener('keypress', handleKeyPress);
+    searchBar.addEventListener('keydown', handleKeydown);
     document.addEventListener('click', function (event) {
       let clicked = event.target;
       if (clicked == searchBar) {
@@ -162,6 +172,8 @@
       destroyLists();
     });
   };
+
+  // Function to create new superhero info
 
   const newSuperheroDOM = function (superhero) {
     return `<div id="superhero-img">
@@ -209,6 +221,8 @@
               </div>
             </div>`;
   };
+
+  // Function to display superhero information
 
   const renderCharacter = function () {
     const superheroContainer = document.getElementById(
@@ -277,6 +291,8 @@
       });
     }
   };
+
+  // Fetch details of a single character from the Marvel API
 
   const fetchCharacter = function () {
     const id = marvel.id;

@@ -1,3 +1,5 @@
+/* Global styling */
+
 body {
   margin: 0;
   padding: 0;
@@ -12,10 +14,14 @@ body {
   border-radius: 30px;
 }
 
+/* Disable text selection */
+
 .prevent-select {
   -webkit-user-select: none;
   user-select: none;
 }
+
+/* Styling app */
 
 #app {
   height: 100vh;
@@ -24,6 +30,8 @@ body {
   padding-bottom: 30px;
   position: relative;
 }
+
+/* Styling header */
 
 #header {
   height: 60px;
@@ -69,6 +77,8 @@ body {
   }
 }
 
+/* Styling search bar */
+
 #search-characters {
   width: 300px;
 }
@@ -113,6 +123,8 @@ body {
   padding-left: 30px;
   width: 100%;
 }
+
+/* Styling autocomplete list */
 
 .autocomplete-list {
   position: absolute;
@@ -174,6 +186,8 @@ body {
   background-color: rgb(0, 255, 170);
 }
 
+/* Styling footer */
+
 #footer {
   height: 30px;
   box-sizing: border-box;
@@ -188,6 +202,8 @@ body {
   padding-left: 10px;
 }
 
+/* Styling character list */
+
 #characters-container {
   height: 100%;
   background-image: url('../images/pexels-miguel-á-padriñán-19670.jpg');
@@ -196,6 +212,8 @@ body {
   overflow-y: auto;
   scrollbar-width: none;
 }
+
+/* Styling switch tabs */
 
 #tabs {
   display: flex;
@@ -229,6 +247,8 @@ body {
   flex-wrap: wrap;
   justify-content: space-around;
 }
+
+/* Styling character card */
 
 .character-item {
   width: 300px;
@@ -358,6 +378,8 @@ body {
   color: red;
 }
 
+/* Styling superhero details page */
+
 #superhero-page-app {
   height: 100vh;
   box-sizing: border-box;
@@ -414,6 +436,8 @@ body {
 #back-btn:active {
   box-shadow: -3px -3px 8px black;
 }
+
+/* Styling details container */
 
 #info {
   display: flex;
