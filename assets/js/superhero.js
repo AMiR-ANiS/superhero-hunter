@@ -242,6 +242,12 @@
       marvel.characters.push(objToPush);
     });
 
+    let searchBar = document.getElementById('search-bar');
+
+    searchBar.style.fontSize = '0.7rem';
+
+    searchBar.placeholder = 'please wait while we fetch data from server';
+
     // Render superheroes after the first API call to prevent delay
     // If all characters are fetched from API, then loading time increases
 
@@ -276,6 +282,9 @@
 
       offset += 100;
     }
+
+    searchBar.placeholder = 'Eg: Spider-man, Avengers ...';
+    searchBar.style.fontSize = '0.8rem';
 
     // Store the information fetched from the API in localStorage
 

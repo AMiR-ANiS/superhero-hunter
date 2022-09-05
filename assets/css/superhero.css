@@ -92,6 +92,7 @@ body {
   position: absolute;
   left: 10px;
   top: 10px;
+  font-size: 1rem;
 }
 
 #search {
@@ -122,6 +123,7 @@ body {
   padding: 10px;
   padding-left: 30px;
   width: 100%;
+  font-size: 0.8rem;
 }
 
 /* Styling autocomplete list */
@@ -145,6 +147,9 @@ body {
   border-bottom: 1px solid black;
   font-family: cursive;
   font-size: 0.9rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .autocomplete-item:hover {
@@ -153,17 +158,10 @@ body {
 
 .autocomplete-item-name {
   padding: 10px;
-  width: 80%;
-  display: inline-block;
 }
 
 .autocomplete-item-name:hover {
   cursor: pointer;
-}
-
-.autocomplete-item-favourite-btn,
-.autocomplete-item-unfavourite-btn {
-  display: inline-block;
 }
 
 .autocomplete-item-favourite-btn > i,
@@ -494,4 +492,90 @@ body {
 
 #superhero-stats h3 {
   margin: 0;
+}
+
+/* Media queries */
+
+@media screen and (max-width: 1200px) {
+  body {
+    font-size: 0.7rem;
+  }
+
+  .autocomplete-item {
+    font-size: 0.7rem;
+  }
+
+  .character-item {
+    width: 200px;
+    min-width: 200px;
+    height: 600px;
+    margin: 5px;
+  }
+
+  .image-container {
+    width: 200px;
+    height: 300px;
+  }
+
+  .image-container img {
+    width: 100%;
+  }
+
+  .character-desc {
+    font-size: 0.7rem;
+    height: 150px;
+  }
+
+  #footer {
+    height: 20px;
+  }
+
+  #header {
+    height: 50px;
+  }
+
+  #app-name {
+    margin: 0px 10px;
+  }
+
+  #app-name span:nth-child(1) {
+    font-size: 1.5rem;
+  }
+
+  #search-characters {
+    width: 250px;
+  }
+
+  #search-bar {
+    font-size: 0.6rem;
+    padding: 7px;
+    padding-left: 25px;
+  }
+
+  .search-icon {
+    font-size: 0.6rem;
+    top: 9px;
+  }
+
+  #app,
+  #superhero-page-app {
+    padding-top: 50px;
+    padding-bottom: 20px;
+  }
+
+  #superhero-img {
+    width: 300px;
+  }
+
+  #superhero-name {
+    font-size: 1.5rem;
+  }
+
+  .autocomplete-item-name {
+    padding: 5px;
+  }
+
+  #superhero-stats {
+    padding: 10px;
+  }
 }
