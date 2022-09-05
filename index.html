@@ -19,7 +19,7 @@
   <body>
     <div id="app">
       <header id="header">
-        <div id="app-name">
+        <div id="app-name" class="prevent-select">
           <span>MARVEL</span><br />
           <span>Superhero Hunter</span>
         </div>
@@ -32,7 +32,7 @@
                 placeholder="eg: Spiderman"
                 name="character"
               />
-              <div class="search-icon">
+              <div class="search-icon prevent-select">
                 <i class="fa-solid fa-magnifying-glass"></i>
               </div>
               <!-- <div id="search">Search</div> -->
@@ -41,7 +41,7 @@
         </div>
       </header>
       <div id="characters-container">
-        <div id="tabs">
+        <div id="tabs" class="prevent-select">
           <div id="character-tab">CHARACTERS</div>
           <div id="favourite-tab">FAVOURITES</div>
         </div>

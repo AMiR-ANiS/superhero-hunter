@@ -12,6 +12,11 @@ body {
   border-radius: 30px;
 }
 
+.prevent-select {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
 #app {
   height: 100vh;
   box-sizing: border-box;
@@ -35,6 +40,7 @@ body {
   text-align: center;
   margin: 0px 30px;
   min-width: fit-content;
+  cursor: pointer;
 }
 
 #app-name > span:nth-child(1) {
@@ -48,6 +54,19 @@ body {
 #app-name > span:nth-child(3) {
   font-family: monospace;
   font-style: italic;
+  animation: rotateColors 1s ease-in-out infinite alternate;
+}
+
+@keyframes rotateColors {
+  0% {
+    color: red;
+  }
+  50% {
+    color: rgb(0, 255, 0);
+  }
+  100% {
+    color: blue;
+  }
 }
 
 #search-characters {
@@ -107,17 +126,48 @@ body {
   background-color: rgb(233, 233, 233);
   z-index: 10;
   box-shadow: 0px 0px 10px black;
+  box-sizing: border-box;
 }
 
-.autocomplete-list > div {
-  padding: 10px;
+.autocomplete-item {
   border-bottom: 1px solid black;
   font-family: cursive;
+  font-size: 0.9rem;
 }
 
-.autocomplete-list > div:hover {
+.autocomplete-item:hover {
   background-color: rgb(255, 255, 255);
+}
+
+.autocomplete-item-name {
+  padding: 10px;
+  width: 80%;
+  display: inline-block;
+}
+
+.autocomplete-item-name:hover {
   cursor: pointer;
+}
+
+.autocomplete-item-favourite-btn,
+.autocomplete-item-unfavourite-btn {
+  display: inline-block;
+}
+
+.autocomplete-item-favourite-btn > i,
+.autocomplete-item-unfavourite-btn > i {
+  border: 1px solid black;
+  border-radius: 50%;
+  padding: 5px;
+}
+
+.autocomplete-item-favourite-btn > i:hover,
+.autocomplete-item-unfavourite-btn > i:hover {
+  cursor: pointer;
+}
+
+.autocomplete-item-unfavourite-btn > i {
+  color: rgb(91, 0, 151);
 }
 
 .autocomplete-active {
