@@ -171,15 +171,15 @@ const fetchCharacters = async () => {
   const limit = 100;
   const orderBy = 'name';
   let offset = 0;
-  const url = `${API_ROOT}/v1/public/characters?ts=${ts}&apikey=${publicKey}&hash=${hash}&limit=${limit}&offset=${offset}&orderBy=${orderBy}`;
+  let url = `${API_ROOT}/v1/public/characters?ts=${ts}&apikey=${publicKey}&hash=${hash}&limit=${limit}&offset=${offset}&orderBy=${orderBy}`;
 
-  const response = await fetch(url, {
+  let response = await fetch(url, {
     method: 'GET',
     headers: {
       Accept: '*/*'
     }
   });
-  const data = await response.json();
+  let data = await response.json();
 
   // total = total number of characters in the marvel database
   const total = data.data.total;
@@ -218,39 +218,38 @@ const fetchCharacters = async () => {
   renderCharacters();
 
   // Fetching the rest of the superheroes from the API for autocomplete search to work.
+  offset += 100;
+  while (offset < total) {
+    url = `${API_ROOT}/v1/public/characters?ts=${ts}&apikey=${publicKey}&hash=${hash}&limit=${limit}&offset=${offset}&orderBy=${orderBy}`;
+    response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        Accept: '*/*'
+      }
+    });
+    data = await response.json();
 
-  // offset += 100;
-  // while (offset < total) {
-  //   const url = `${API_ROOT}/v1/public/characters?ts=${ts}&apikey=${publicKey}&hash=${hash}&limit=${limit}&offset=${offset}&orderBy=${orderBy}`;
-  //   response = await fetch(url, {
-  //     method: 'GET',
-  //     headers: {
-  //       Accept: '*/*'
-  //     }
-  //   });
-  //   data = await response.json();
+    data.data.results.forEach((item) => {
+      const character = {
+        name: item.name,
+        description: item.description,
+        id: item.id,
+        events: item.events.available,
+        stories: item.stories.available,
+        series: item.series.available,
+        comics: item.comics.available,
+        thumbnail: item.thumbnail
+      };
+      marvel.characters.push(character);
+    });
 
-  //   data.data.results.forEach(function (obj) {
-  //     let objToPush = {
-  //       name: obj.name,
-  //       description: obj.description,
-  //       id: obj.id,
-  //       events: obj.events.available,
-  //       stories: obj.stories.available,
-  //       series: obj.series.available,
-  //       comics: obj.comics.available,
-  //       thumbnail: JSON.parse(JSON.stringify(obj.thumbnail))
-  //     };
-  //     marvel.characters.push(objToPush);
-  //   });
+    offset += 100;
+  }
 
-  //   offset += 100;
-  // }
-
-  // searchBar.placeholder = 'Eg: Spider-man, Avengers ...';
-  // searchBar.style.fontSize = '0.8rem';
+  searchBar.placeholder = 'Eg: Spider-man, Avengers ...';
 
   // Store the information fetched from the API in localStorage
+  localStorage.setItem('marvel', JSON.stringify(marvel));
 };
 
 // Autocomplete search function
@@ -268,9 +267,11 @@ const enableAutocomplete = function () {
 
   const newAutocompleteItemDOM = (character, btn, btnClass, inputValue) => {
     return `<div class="autocomplete-item-name">
-              <strong>${character.name.slice(0, inputValue.length)}</strong>
-              ${character.name.slice(inputValue.length)}
-            </div>
+              <strong>${character.name.slice(
+                0,
+                inputValue.length
+              )}</strong>${character.name.slice(inputValue.length)}
+              </div>
             <div class="${btnClass}">${btn}</div>`;
   };
 
@@ -425,6 +426,9 @@ favouriteTab.addEventListener('click', toggleTab);
 const marvelLS = JSON.parse(localStorage.getItem('marvel'));
 let fetchRequired = false;
 if (marvelLS) {
+  // To preserve previous favourites
+  marvel.favourites = marvelLS.favourites;
+
   // If localStorage variable has expired (crossed the expiry date), re-fetch the information
   let ms = Date.now();
   if (ms >= marvelLS.expiry) {
@@ -436,6 +440,7 @@ if (marvelLS) {
 
 if (fetchRequired) {
   fetchCharacters();
+  console.log('fetch');
 } else {
   marvel = marvelLS;
   renderCharacters();

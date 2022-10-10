@@ -38,8 +38,10 @@ const enableAutocomplete = function () {
 
   const newAutocompleteItemDOM = (character, btn, btnClass, inputValue) => {
     return `<div class="autocomplete-item-name">
-              <strong>${character.name.slice(0, inputValue.length)}</strong>
-              ${character.name.slice(inputValue.length)}
+              <strong>${character.name.slice(
+                0,
+                inputValue.length
+              )}</strong>${character.name.slice(inputValue.length)}
             </div>
             <div class="${btnClass}">${btn}</div>`;
   };
