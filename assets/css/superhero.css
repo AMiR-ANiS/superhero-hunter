@@ -148,7 +148,6 @@ body {
   font-family: cursive;
   font-size: 0.9rem;
   display: flex;
-  justify-content: space-between;
   align-items: center;
 }
 
@@ -158,6 +157,7 @@ body {
 
 .autocomplete-item-name {
   padding: 10px;
+  flex-grow: 1;
 }
 
 .autocomplete-item-name:hover {
